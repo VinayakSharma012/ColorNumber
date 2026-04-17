@@ -31,6 +31,30 @@ function initializeApp() {
         // Optional: prevent typing beyond 6 digits
         colorInput.addEventListener('keydown', handleKeyDown);
     }
+    
+    // Set up scroll listener for input animation
+    window.addEventListener('scroll', handleScroll);
+    
+    // Set up reset button
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetPage);
+    }
+    
+    // Set up random color button
+    const randomBtn = document.getElementById('randomBtn');
+    if (randomBtn) {
+        randomBtn.addEventListener('click', generateRandomColor);
+    }
+    
+    // Set up copy button
+    const copyBtn = document.getElementById('copyBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', copyColorCode);
+    }
+    
+    // Initialize display with default values
+    initializeDisplay();
 }
 
 /* =============================================
@@ -165,7 +189,12 @@ function handleInputChange(event) {
     // Update input field styling
     updateInputStyle(isValid);
     
-    // Debug log (remove in production if desired)
+    // If valid, update the color display
+    if (isValid) {
+        onValidInput(inputValue);
+    }
+    
+    // Debug log
     console.log(`Input: "${inputValue}" | Valid: ${isValid} | Error: "${error}"`);
 }
 
@@ -240,21 +269,150 @@ function handleKeyDown(event) {
  * @param {string} colorNumber - 6-digit number
  * @returns {string} - Hex color code (#XXXXXX)
  */
-function numberToHex(colorNumber) {
-    // Placeholder - will be implemented in Phase 6
-    return `#${colorNumber}`;
+function convertNumberToHex(colorNumber) {
+    if (!colorNumber || colorNumber.length !== 6) {
+        return '#000000'; // Default to black if invalid
+    }
+    return `#${colorNumber.toUpperCase()}`;
 }
 
 /**
- * Convert hex color to RGB format
- * Example: #FF5733 → rgb(255, 87, 51)
+ * Calculate the brightness of a color to determine text color contrast
+ * Uses relative luminance formula
  * 
- * @param {string} hex - Hex color code
- * @returns {string} - RGB format
+ * @param {string} hexColor - Hex color code (e.g., "#123456")
+ * @returns {string} - "light" or "dark"
  */
-function hexToRgb(hex) {
-    // Placeholder - will be implemented in Phase 6
-    return `rgb(0, 0, 0)`;
+function getContrastColor(hexColor) {
+    // Remove the # if present
+    const hex = hexColor.replace('#', '');
+    
+    // Convert hex to RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate brightness using standard luminance formula
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    
+    // If color is bright, use dark text; if dark, use light text
+    return brightness > 128 ? 'dark' : 'light';
+}
+
+/**
+ * Apply background color to page container
+ * Updates the page background with smooth transition
+ * Also adjusts text color for readability
+ * 
+ * @param {string} hexColor - Hex color code (e.g., "#123456")
+ */
+function applyBackgroundColor(hexColor) {
+    const pageContainer = document.querySelector('.page-container');
+    
+    if (!pageContainer) {
+        console.error('Page container not found');
+        return;
+    }
+    
+    // Apply the color to background
+    pageContainer.style.backgroundColor = hexColor;
+    
+    // Determine text color contrast
+    const textColor = getContrastColor(hexColor);
+    
+    // Update display elements text color for readability
+    const displays = document.querySelectorAll('.color-display, .hex-display, .rgb-display');
+    displays.forEach(element => {
+        if (textColor === 'light') {
+            element.style.color = '#ffffff';
+        } else {
+            element.style.color = '#2c3e50'; // Dark color
+        }
+    });
+    
+    // Update footer text color
+    const footer = document.querySelector('.page-footer');
+    if (footer) {
+        if (textColor === 'light') {
+            footer.style.color = '#ffffff';
+        } else {
+            footer.style.color = '#2c3e50';
+        }
+    }
+}
+
+/**
+ * Update the display text showing the current color
+ * Updates both the number display and hex code display
+ * 
+ * @param {string} colorNumber - 6-digit number (e.g., "123456")
+ * @param {string} hexColor - Hex color code (e.g., "#123456")
+ */
+function updateDisplayText(colorNumber, hexColor) {
+    // Update color number display
+    const colorDisplay = document.getElementById('colorDisplay');
+    if (colorDisplay) {
+        colorDisplay.textContent = colorNumber.toUpperCase();
+    }
+    
+    // Update hex code display
+    const hexDisplay = document.getElementById('hexDisplay');
+    if (hexDisplay) {
+        hexDisplay.textContent = hexColor;
+    }
+    
+    // Calculate and display RGB value
+    const hexStr = hexColor.replace('#', '');
+    const r = parseInt(hexStr.substring(0, 2), 16);
+    const g = parseInt(hexStr.substring(2, 4), 16);
+    const b = parseInt(hexStr.substring(4, 6), 16);
+    
+    const rgbDisplay = document.getElementById('rgbDisplay');
+    if (rgbDisplay) {
+        rgbDisplay.textContent = `rgb(${r}, ${g}, ${b})`;
+    }
+    
+    // Update footer with current color
+    const currentColorSpan = document.getElementById('currentColor');
+    if (currentColorSpan) {
+        currentColorSpan.textContent = `Color: ${hexColor}`;
+    }
+}
+
+/**
+ * Initialize display with default values
+ * Called on page load
+ */
+function initializeDisplay() {
+    const defaultColor = '#000000';
+    updateDisplayText('000000', defaultColor);
+    applyBackgroundColor(defaultColor);
+}
+
+/**
+ * Coordinate all actions when valid input is provided
+ * This is the main function that ties everything together
+ * 
+ * @param {string} inputValue - The validated 6-digit color number
+ */
+function onValidInput(inputValue) {
+    // Convert number to hex format
+    const hexColor = convertNumberToHex(inputValue);
+    
+    // Apply color to page background
+    applyBackgroundColor(hexColor);
+    
+    // Update all display text
+    updateDisplayText(inputValue, hexColor);
+    
+    // Store as last valid input (for potential future use)
+    window.lastValidColor = {
+        number: inputValue,
+        hex: hexColor,
+        timestamp: new Date()
+    };
+    
+    console.log(`Color applied: ${hexColor}`);
 }
 
 /* =============================================
@@ -264,30 +422,114 @@ function hexToRgb(hex) {
    ============================================= */
 
 /**
+ * Handle scroll event
+ * Moves input field to top-left when scrolling down
+ * CSS class handles the animation
+ */
+function handleScroll() {
+    const inputSection = document.querySelector('.input-section');
+    
+    if (!inputSection) return;
+    
+    const scrollPosition = window.scrollY || window.pageYOffset;
+    
+    // Add scrolled class when user scrolls down 200px
+    if (scrollPosition > 200) {
+        inputSection.classList.add('scrolled');
+    } else {
+        inputSection.classList.remove('scrolled');
+    }
+}
+
+/**
  * Reset button click handler
  * Resets the color generator to default state
  */
-function handleResetClick() {
-    // Placeholder - will be implemented in Phase 6
-    console.log('Reset button clicked');
+function resetPage() {
+    const colorInput = document.getElementById('colorInput');
+    
+    // Clear input field
+    if (colorInput) {
+        colorInput.value = '';
+    }
+    
+    // Clear error message
+    displayError('');
+    
+    // Reset input styling
+    updateInputStyle(false);
+    
+    // Reset display to default
+    initializeDisplay();
+    
+    // Clear last valid color
+    window.lastValidColor = null;
+    
+    // Scroll back to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Focus on input for next entry
+    if (colorInput) {
+        colorInput.focus();
+    }
+    
+    console.log('Page reset to default state');
 }
 
 /**
- * Random button click handler
- * Generates a random 6-digit color
+ * Generate a random 6-digit color
  */
-function handleRandomClick() {
-    // Placeholder - will be implemented in Phase 6
-    console.log('Random button clicked');
+function generateRandomColor() {
+    // Generate 6 random digits
+    const randomNumber = Math.floor(Math.random() * 1000000)
+        .toString()
+        .padStart(6, '0');
+    
+    // Set the input value
+    const colorInput = document.getElementById('colorInput');
+    if (colorInput) {
+        colorInput.value = randomNumber;
+    }
+    
+    // Trigger validation and color update
+    const { isValid, error } = validateInput(randomNumber);
+    displayError(error);
+    updateInputStyle(isValid);
+    
+    if (isValid) {
+        onValidInput(randomNumber);
+    }
+    
+    console.log(`Random color generated: ${randomNumber}`);
 }
 
 /**
- * Copy button click handler
- * Copies the current color code to clipboard
+ * Copy color code to clipboard
  */
-function handleCopyClick() {
-    // Placeholder - will be implemented in Phase 6
-    console.log('Copy button clicked');
+function copyColorCode() {
+    if (!window.lastValidColor) {
+        alert('Please enter a valid color first');
+        return;
+    }
+    
+    const hexColor = window.lastValidColor.hex;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(hexColor).then(() => {
+        // Show feedback
+        const copyBtn = document.getElementById('copyBtn');
+        const originalText = copyBtn.textContent;
+        
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+        }, 2000);
+        
+        console.log(`Copied to clipboard: ${hexColor}`);
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard');
+    });
 }
 
 /* =============================================
