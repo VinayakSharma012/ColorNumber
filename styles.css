@@ -50,6 +50,7 @@
 html {
     height: 100%;
     font-size: 16px;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -78,6 +79,7 @@ body {
     grid-template-rows: auto 1fr auto;
     background-color: var(--bg-color);
     transition: background-color 0.5s ease-in-out;
+    will-change: background-color;
 }
 
 /* =============================================
@@ -173,6 +175,7 @@ body {
     text-align: center;
     transition: all var(--transition);
     cursor: text;
+    will-change: border-color, box-shadow, background-color;
 }
 
 /* Input focus state */
@@ -336,6 +339,7 @@ body {
     letter-spacing: 1px;
     box-shadow: 0 2px 4px var(--shadow-light);
     width: 100%;
+    will-change: transform, box-shadow;
 }
 
 .btn:hover {
@@ -419,6 +423,247 @@ body {
 .footer-credits a:hover {
     color: var(--secondary-color);
     text-decoration: underline;
+}
+
+/* =============================================
+   KEYFRAME ANIMATIONS
+   ============================================= */
+
+/* Entry animation for input section */
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Entry animation for display section */
+@keyframes slideUpFadeInDisplay {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Entry animation for button section */
+@keyframes slideUpFadeInButtons {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtle shake animation for error state */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Number display fade and scale animation */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Smooth page background color transition */
+@keyframes bgColorChange {
+    from {
+        background-color: var(--bg-color);
+    }
+    to {
+        background-color: inherit;
+    }
+}
+
+/* =============================================
+   ANIMATION & TRANSITION PROPERTIES
+   Apply animations to elements
+   ============================================= */
+
+/* Page entry animations - staggered cascade effect */
+.input-section {
+    animation: slideUpFadeIn 0.6s ease-out;
+}
+
+.display-section {
+    animation: slideUpFadeInDisplay 0.6s ease-out 0.2s both;
+}
+
+.button-section {
+    animation: slideUpFadeInButtons 0.6s ease-out 0.4s both;
+}
+
+/* =============================================
+   INPUT FIELD HOVER & FOCUS STATES
+   ============================================= */
+
+.color-input {
+    transition: all var(--transition);
+}
+
+/* Input hover state */
+.color-input:hover:not(:focus) {
+    border-color: #3498db;
+    background-color: #fafafa;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+}
+
+/* Input focus state */
+.color-input:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    animation: none;
+}
+
+/* Input invalid/error state */
+.color-input.invalid {
+    border-color: var(--error-color);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+    animation: shake 0.3s ease;
+}
+
+/* =============================================
+   DISPLAY AREA ANIMATIONS
+   ============================================= */
+
+.color-display,
+.hex-display,
+.rgb-display {
+    transition: all 0.4s ease-in;
+}
+
+.color-display.updated,
+.hex-display.updated,
+.rgb-display.updated {
+    animation: fadeInScale 0.4s ease-in;
+}
+
+/* =============================================
+   ERROR MESSAGE ANIMATIONS
+   ============================================= */
+
+.error-message {
+    transition: opacity 0.2s ease-in, visibility 0.2s ease-in;
+}
+
+.error-message.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.error-message.hidden {
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+}
+
+/* =============================================
+   BUTTON HOVER & ACTIVE STATES
+   ============================================= */
+
+.btn {
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Button hover state - lift up and enhance shadow */
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Button active/click state - press down effect */
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled button state */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+/* =============================================
+   SCROLL-TRIGGERED ANIMATIONS
+   (Triggered by JavaScript)
+   ============================================= */
+
+/* Input section scrolled state */
+.input-section.scrolled {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 280px;
+    max-width: 40%;
+    transform: scale(0.85);
+    z-index: 1000;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 16px var(--shadow-medium);
+    transition: all 0.3s ease;
+    padding: var(--spacing-md);
+}
+
+/* Input label hidden when scrolled */
+.input-section.scrolled .input-label,
+.input-section.scrolled .input-hint {
+    display: none;
+}
+
+/* Input field smaller when scrolled */
+.input-section.scrolled .color-input {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    letter-spacing: 1px;
+}
+
+/* Section title hidden when scrolled */
+.input-section.scrolled .section-title {
+    display: none;
+}
+
+/* =============================================
+   PAGE BACKGROUND COLOR TRANSITION
+   Smooth fade when color changes
+   ============================================= */
+
+.page-container {
+    transition: background-color 0.5s ease-in-out;
 }
 
 /* =============================================
