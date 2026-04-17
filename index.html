@@ -1,20 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- ===============================================
+         META TAGS & HEAD SECTION
+         Browser configuration and document metadata
+         =============================================== -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive background color generator - Enter a 6-digit number to change colors">
+    <meta name="theme-color" content="#3498db">
+    
     <title>Background Color Generator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <!-- ============================================
-         MAIN CONTENT SECTION
-         Add your color generator interface here
-         ============================================ -->
-    <main class="container">
-        <!-- Your content will go here -->
-    </main>
 
+<body>
+    <!-- ===============================================
+         PAGE CONTAINER
+         Outermost wrapper for the entire application
+         =============================================== -->
+    <div class="page-container">
+
+        <!-- ===============================================
+             HEADER SECTION
+             Contains page title and introduction
+             =============================================== -->
+        <header class="page-header">
+            <h1>Background Color Generator</h1>
+            <p class="subtitle">Enter a 6-digit number to change the background color</p>
+        </header>
+
+        <!-- ===============================================
+             MAIN CONTENT WRAPPER
+             Semantic main element containing all interactive content
+             =============================================== -->
+        <main class="content-wrapper">
+
+            <!-- ===============================================
+                 INPUT SECTION
+                 Contains label, input field, and error message
+                 =============================================== -->
+            <section class="input-section" aria-labelledby="inputTitle">
+                <h2 id="inputTitle" class="section-title">Color Input</h2>
+                
+                <!-- Label for the color input field -->
+                <label for="colorInput" class="input-label">
+                    Enter a 6-Digit Number
+                </label>
+
+                <!-- Input field for color number -->
+                <input
+                    type="text"
+                    id="colorInput"
+                    class="color-input"
+                    placeholder="e.g., 123456"
+                    maxlength="6"
+                    aria-label="Enter 6-digit number for background color"
+                    aria-describedby="errorMessage inputHint"
+                    inputmode="numeric"
+                >
+
+                <!-- Helper text for input field -->
+                <p id="inputHint" class="input-hint">
+                    Enter numbers only (0-9). Valid range: 000000 to 999999
+                </p>
+
+                <!-- Error message container - Initially hidden -->
+                <div
+                    id="errorMessage"
+                    class="error-message hidden"
+                    role="alert"
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    <!-- Error text will be inserted here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- ===============================================
+                 DISPLAY SECTION
+                 Shows the current color number and hex value
+                 =============================================== -->
+            <section class="display-section" aria-labelledby="displayTitle">
+                <h2 id="displayTitle" class="section-title">Current Color</h2>
+                
+                <!-- Main color number display -->
+                <div class="display-area">
+                    <p class="display-label">Color Number:</p>
+                    <div
+                        id="colorDisplay"
+                        class="color-display"
+                        aria-live="polite"
+                        aria-label="Current color number"
+                    >
+                        000000
+                    </div>
+                </div>
+
+                <!-- Hex color code display -->
+                <div class="hex-area">
+                    <p class="display-label">Hex Code:</p>
+                    <div
+                        id="hexDisplay"
+                        class="hex-display"
+                        aria-live="polite"
+                        aria-label="Current hex color code"
+                    >
+                        #000000
+                    </div>
+                </div>
+
+                <!-- RGB color display -->
+                <div class="rgb-area">
+                    <p class="display-label">RGB:</p>
+                    <div
+                        id="rgbDisplay"
+                        class="rgb-display"
+                        aria-live="polite"
+                        aria-label="Current RGB color values"
+                    >
+                        rgb(0, 0, 0)
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===============================================
+                 BUTTON SECTION
+                 Contains action buttons
+                 =============================================== -->
+            <section class="button-section">
+                <div class="button-group">
+                    <!-- Reset button -->
+                    <button
+                        id="resetBtn"
+                        class="reset-btn btn"
+                        aria-label="Reset color to black (000000)"
+                    >
+                        Reset Color
+                    </button>
+
+                    <!-- Random color button -->
+                    <button
+                        id="randomBtn"
+                        class="random-btn btn"
+                        aria-label="Generate random 6-digit color"
+                    >
+                        Random Color
+                    </button>
+
+                    <!-- Copy button -->
+                    <button
+                        id="copyBtn"
+                        class="copy-btn btn"
+                        aria-label="Copy current color code to clipboard"
+                    >
+                        Copy Code
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ===============================================
+             FOOTER SECTION
+             Contains information and additional links
+             =============================================== -->
+        <footer class="page-footer">
+            <p class="footer-text">
+                Background Color Generator &bull; 
+                <span id="currentColor" aria-label="Current background color">Color: #000000</span>
+            </p>
+            <p class="footer-credits">
+                Created as an internship assignment | 
+                <a href="#" aria-label="Learn more about color codes">About Colors</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- ===============================================
+         JAVASCRIPT
+         Load external script file
+         =============================================== -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -18,6 +18,9 @@ body {
     color: var(--text-color);
     background-color: var(--bg-color);
     transition: background-color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* =============================================
@@ -71,6 +74,11 @@ p {
     margin-bottom: var(--spacing-sm);
 }
 
+/* =============================================
+   RESPONSIVE DESIGN
+   Mobile-first approach
+   ============================================= */
+
 /* Small screens */
 @media (max-width: 768px) {
     h1 {
@@ -79,50 +87,331 @@ p {
     h2 {
         font-size: 1.25rem;
     }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .page-header {
+        padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+    }
+
+    .content-wrapper {
+        padding: var(--spacing-md);
+    }
+
+    .color-display,
+    .hex-display,
+    .rgb-display {
+        font-size: 1.5rem;
+    }
+
+    .page-footer {
+        padding: var(--spacing-md);
+        font-size: 0.85rem;
+    }
+
+    section {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    :root {
+        font-size: 14px;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+    }
+
+    .color-display,
+    .hex-display,
+    .rgb-display {
+        font-size: 1.2rem;
+    }
+
+    .color-input {
+        font-size: 1rem;
+        padding: var(--spacing-sm);
+    }
 }
 
 /* =============================================
    CONTAINER & LAYOUT
    ============================================= */
 
-.container {
-    max-width: 1200px;
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-color);
+}
+
+.content-wrapper {
+    flex: 1;
+    max-width: 600px;
     margin: 0 auto;
     padding: var(--spacing-lg);
+    width: 100%;
+}
+
+.page-header {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--light-text);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--light-text);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 300;
+}
+
+.page-footer {
+    text-align: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.footer-text {
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-credits {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.footer-credits a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-credits a:hover {
+    text-decoration: underline;
 }
 
 /* =============================================
-   GRID LAYOUT SECTION
-   Add your grid styles here
+   SECTION STYLING
    ============================================= */
 
-/* Example: 
-   .grid {
-       display: grid;
-       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-       gap: var(--spacing-md);
-   }
-*/
+section {
+    margin-bottom: var(--spacing-lg);
+    background-color: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-color);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+}
 
 /* =============================================
-   ANIMATION SECTION
-   Add your animations here
+   INPUT SECTION STYLING
    ============================================= */
 
-/* Example:
-   @keyframes fadeIn {
-       from {
-           opacity: 0;
-       }
-       to {
-           opacity: 1;
-       }
-   }
-   
-   .fade-in {
-       animation: fadeIn 0.5s ease-in;
-   }
-*/
+.input-section {
+    background-color: var(--card-bg);
+}
+
+.input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-color);
+    font-size: 1.05rem;
+}
+
+.color-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.color-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.color-input::placeholder {
+    color: #bdc3c7;
+    letter-spacing: 1px;
+}
+
+.input-hint {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: var(--spacing-sm);
+    font-style: italic;
+}
+
+/* Error message styling */
+.error-message {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: #fadbd8;
+    border-left: 4px solid var(--error-color);
+    border-radius: var(--radius-sm);
+    color: var(--error-color);
+    font-weight: 500;
+    display: block;
+}
+
+.error-message.hidden {
+    display: none;
+}
+
+/* =============================================
+   DISPLAY SECTION STYLING
+   ============================================= */
+
+.display-section {
+    background-color: var(--card-bg);
+}
+
+.display-area,
+.hex-area,
+.rgb-area {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: rgba(52, 152, 219, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--primary-color);
+}
+
+.display-area:last-child,
+.hex-area:last-child,
+.rgb-area:last-child {
+    margin-bottom: 0;
+}
+
+.display-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7f8c8d;
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.color-display,
+.hex-display,
+.rgb-display {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+    word-break: break-all;
+}
+
+/* =============================================
+   BUTTON SECTION STYLING
+   ============================================= */
+
+.button-section {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin-top: var(--spacing-xl);
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+}
+
+@media (min-width: 600px) {
+    .button-group {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.reset-btn {
+    background-color: var(--error-color);
+    color: var(--light-text);
+}
+
+.reset-btn:hover {
+    background-color: #c0392b;
+}
+
+.random-btn {
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.random-btn:hover {
+    background-color: #27ae60;
+}
+
+.copy-btn {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.copy-btn:hover {
+    background-color: #2980b9;
+}
 
 /* =============================================
    UTILITY CLASSES
