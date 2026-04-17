@@ -1,462 +1,251 @@
-// When page loads, setup everything
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+// init when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setupApp();
 });
 
-// Setup all event listeners and initial state
-function initializeApp() {
-    const colorInput = document.getElementById('colorInput');
-    const resetBtn = document.getElementById('resetBtn');
-    const randomBtn = document.getElementById('randomBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+function setupApp() {
+    const input = document.getElementById('colorInput');
+    const reset = document.getElementById('resetBtn');
+    const random = document.getElementById('randomBtn');
+    const copy = document.getElementById('copyBtn');
+    const clearHist = document.getElementById('clearHistoryBtn');
     
-    // Input field listeners - validate as user types
-    if (colorInput) {
-        colorInput.addEventListener('input', handleInputChange);
-        colorInput.addEventListener('paste', handlePasteEvent);
-        colorInput.addEventListener('keydown', handleKeyDown);
-    }
+    // setup input listeners
+    input?.addEventListener('input', onInputChange);
+    input?.addEventListener('paste', onPaste);
+    input?.addEventListener('keydown', onKeyPress);
     
-    // Button listeners
-    if (resetBtn) resetBtn.addEventListener('click', resetPage);
-    if (randomBtn) randomBtn.addEventListener('click', generateRandomColor);
-    if (copyBtn) copyBtn.addEventListener('click', copyColorCode);
-    if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', clearColorHistory);
+    // button clicks
+    reset?.addEventListener('click', resetColor);
+    random?.addEventListener('click', randomColor);
+    copy?.addEventListener('click', copyCode);
+    clearHist?.addEventListener('click', clearHistory);
     
-    // Scroll listener for input animation
-    window.addEventListener('scroll', handleScroll);
+    // when scrolling
+    window.addEventListener('scroll', moveInputOnScroll);
     
-    // Bonus features setup
-    displayColorHistory();
-    setupHexClickToCopy();
+    // load history and setup hex click
+    loadHistory();
+    setupHexClick();
     
-    // Show default color on load
-    initializeDisplay();
+    showDefaultColor();
 }
 
-// Check if input is valid (6 digits only)
-function validateInput(inputValue) {
-    // Empty = no error message yet
-    if (inputValue === "") {
-        return { isValid: false, error: "" };
-    }
-
-    // Too short
-    if (inputValue.length < 6) {
-        return { 
-            isValid: false, 
-            error: `Need ${6 - inputValue.length} more digits` 
-        };
-    }
-
-    // Too long
-    if (inputValue.length > 6) {
-        return { isValid: false, error: "Only 6 digits allowed" };
-    }
-
-    // Check if all are numbers
-    if (!/^[0-9]{6}$/.test(inputValue)) {
-        return { isValid: false, error: "Only numbers (0-9)" };
-    }
-
-    // All good!
-    return { isValid: true, error: "" };
+function validateInput(val) {
+    if (val === "") return { valid: false, msg: "" };
+    if (val.length < 6) return { valid: false, msg: `need ${6 - val.length} more` };
+    if (val.length > 6) return { valid: false, msg: "only 6 digits" };
+    if (!/^[0-9A-Fa-f]{6}$/.test(val)) return { valid: false, msg: "numbers only" };
+    return { valid: true, msg: "" };
 }
 
-// Show or hide error message
-function displayError(errorMessage) {
-    const errorElement = document.getElementById('errorMessage');
-    if (!errorElement) return;
-
-    if (errorMessage === "") {
-        errorElement.classList.add('hidden');
-        errorElement.textContent = "";
+function showError(error) {
+    const el = document.getElementById('errorMessage');
+    if (!el) return;
+    if (error) {
+        el.textContent = error;
+        el.classList.remove('hidden');
     } else {
-        errorElement.classList.remove('hidden');
-        errorElement.textContent = errorMessage;
+        el.classList.add('hidden');
     }
 }
 
-// Style input - red for invalid, green for valid
-function updateInputStyle(isValid) {
-    const colorInput = document.getElementById('colorInput');
-    if (!colorInput) return;
-
-    if (isValid) {
-        colorInput.classList.remove('invalid');
-        colorInput.classList.add('valid');
+function onInputChange(e) {
+    const val = e.target.value;
+    const result = validateInput(val);
+    const input = e.target;
+    
+    if (result.valid) {
+        input.classList.remove('invalid');
+        input.classList.add('valid');
+        showError("");
+        updateColor(val);
     } else {
-        colorInput.classList.remove('valid');
-        colorInput.classList.add('invalid');
+        if (val !== "") {
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+            showError(result.msg);
+        } else {
+            input.classList.remove('invalid', 'valid');
+            showError("");
+        }
     }
 }
 
-// When user types or pastes - validate and update
-function handleInputChange(event) {
-    const inputValue = event.target.value;
-    const { isValid, error } = validateInput(inputValue);
-    
-    displayError(error);
-    updateInputStyle(isValid);
-    
-    // If valid, update color
-    if (isValid) {
-        onValidInput(inputValue);
+function onPaste(e) {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    if (!/^[0-9A-Fa-f]{6}$/.test(text)) return;
+    e.target.value = text;
+    onInputChange({ target: e.target });
+}
+
+function onKeyPress(e) {
+    if (e.key === 'Enter') {
+        const val = e.target.value;
+        if (validateInput(val).valid) {
+            updateColor(val);
+        }
     }
 }
 
-// Clean up pasted content (remove letters/symbols, keep only 6 digits)
-function handlePasteEvent(event) {
-    event.preventDefault();
-    
-    const pastedText = (event.clipboardData || window.clipboardData).getData('text');
-    const cleanedText = pastedText.replace(/\D/g, '').substring(0, 6);
-    
-    const colorInput = document.getElementById('colorInput');
-    colorInput.value = cleanedText;
-    
-    // Validate the cleaned text
-    const { isValid, error } = validateInput(cleanedText);
-    displayError(error);
-    updateInputStyle(isValid);
-    
-    if (isValid) {
-        onValidInput(cleanedText);
-    }
-}
-
-// Prevent typing more than 6 digits
-function handleKeyDown(event) {
-    const colorInput = document.getElementById('colorInput');
-    const currentValue = colorInput.value;
-    
-    // Allow special keys
-    const allowedKeys = [
-        'Backspace', 'Delete', 'Tab', 'Enter',
-        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-        'Home', 'End', 'Escape'
-    ];
-    
-    const isSpecialKey = allowedKeys.includes(event.key);
-    const isCtrlKey = event.ctrlKey || event.metaKey;
-    
-    // Block if already 6 digits and trying to type more
-    if (currentValue.length >= 6 && !isSpecialKey && !isCtrlKey) {
-        event.preventDefault();
-    }
-}
-
-// Convert number to hex (e.g., 123456 → #123456)
-function convertNumberToHex(colorNumber) {
-    if (!colorNumber || colorNumber.length !== 6) {
-        return '#000000';
-    }
-    return `#${colorNumber.toUpperCase()}`;
-}
-
-// Check if color is light or dark to pick text color
-function getContrastColor(hexColor) {
-    const hex = hexColor.replace('#', '');
+function hexToRgb(hex) {
+    hex = hex.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    
-    // Calculate brightness
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    
-    // If bright, use dark text; if dark, use light text
-    return brightness > 128 ? 'dark' : 'light';
+    return { r, g, b };
 }
 
-// Apply background color to page
-function applyBackgroundColor(hexColor) {
-    const pageContainer = document.querySelector('.page-container');
-    if (!pageContainer) return;
+function updateColor(colorNum) {
+    const hex = '#' + colorNum.toUpperCase();
+    const { r, g, b } = hexToRgb(hex);
     
-    pageContainer.style.backgroundColor = hexColor;
+    // update displays
+    const colorDisp = document.getElementById('colorDisplay');
+    const hexDisp = document.getElementById('hexDisplay');
+    const rgbDisp = document.getElementById('rgbDisplay');
+    const footer = document.getElementById('currentColor');
     
-    // Adjust text color for readability
-    const textColor = getContrastColor(hexColor);
-    const displays = document.querySelectorAll('.color-display, .hex-display, .rgb-display');
+    colorDisp && (colorDisp.textContent = colorNum.toUpperCase());
+    hexDisp && (hexDisp.textContent = hex);
+    rgbDisp && (rgbDisp.textContent = `rgb(${r}, ${g}, ${b})`);
+    footer && (footer.textContent = `Color: ${hex}`);
     
-    displays.forEach(element => {
-        element.style.color = textColor === 'light' ? '#ffffff' : '#2c3e50';
-    });
+    // change bg
+    document.body.style.backgroundColor = hex;
+    document.querySelector('.page-container').style.backgroundColor = hex;
     
-    // Adjust footer color too
-    const footer = document.querySelector('.page-footer');
-    if (footer) {
-        footer.style.color = textColor === 'light' ? '#ffffff' : '#2c3e50';
-    }
-}
-
-// Update all display text (number, hex, RGB)
-function updateDisplayText(colorNumber, hexColor) {
-    const colorDisplay = document.getElementById('colorDisplay');
-    const hexDisplay = document.getElementById('hexDisplay');
-    const rgbDisplay = document.getElementById('rgbDisplay');
-    
-    if (colorDisplay) colorDisplay.textContent = colorNumber.toUpperCase();
-    if (hexDisplay) hexDisplay.textContent = hexColor;
-    
-    // Calculate RGB from hex
-    const hex = hexColor.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    if (rgbDisplay) rgbDisplay.textContent = `rgb(${r}, ${g}, ${b})`;
-    
-    // Update footer
-    const currentColorSpan = document.getElementById('currentColor');
-    if (currentColorSpan) currentColorSpan.textContent = `Color: ${hexColor}`;
-    
-    // Bonus features - update all displays
+    // bonus features
     updateColorName(r, g, b);
     updateBrightness(r, g, b);
-    updateColorSwatch(hexColor);
-    addToColorHistory(hexColor);
+    updateSwatch(hex);
+    saveColor(hex);
 }
 
-// Show default color on page load
-function initializeDisplay() {
-    updateDisplayText('000000', '#000000');
-    applyBackgroundColor('#000000');
-}
-
-// Main function - when user enters valid color
-function onValidInput(inputValue) {
-    const hexColor = convertNumberToHex(inputValue);
-    
-    applyBackgroundColor(hexColor);
-    updateDisplayText(inputValue, hexColor);
-    
-    // Store for later use (copy button, etc)
-    window.lastValidColor = {
-        number: inputValue,
-        hex: hexColor,
-        timestamp: new Date()
-    };
-}
-
-// Move input to top-left when scrolling down
-function handleScroll() {
-    const inputSection = document.querySelector('.input-section');
-    if (!inputSection) return;
-    
-    const scrollPosition = window.scrollY || window.pageYOffset;
-    
-    if (scrollPosition > 200) {
-        inputSection.classList.add('scrolled');
-    } else {
-        inputSection.classList.remove('scrolled');
-    }
-}
-
-// Reset everything to default
-function resetPage() {
-    const colorInput = document.getElementById('colorInput');
-    
-    if (colorInput) colorInput.value = '';
-    
-    displayError('');
-    updateInputStyle(false);
-    initializeDisplay();
-    
-    window.lastValidColor = null;
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    if (colorInput) colorInput.focus();
-}
-
-// Generate random 6-digit color
-function generateRandomColor() {
-    const randomNumber = Math.floor(Math.random() * 1000000)
-        .toString()
-        .padStart(6, '0');
-    
-    const colorInput = document.getElementById('colorInput');
-    if (colorInput) colorInput.value = randomNumber;
-    
-    const { isValid, error } = validateInput(randomNumber);
-    displayError(error);
-    updateInputStyle(isValid);
-    
-    if (isValid) {
-        onValidInput(randomNumber);
-    }
-}
-
-// Copy hex code to clipboard
-function copyColorCode() {
-    if (!window.lastValidColor) {
-        alert('Please enter a valid color first');
-        return;
-    }
-    
-    const hexColor = window.lastValidColor.hex;
-    
-    navigator.clipboard.writeText(hexColor).then(() => {
-        const copyBtn = document.getElementById('copyBtn');
-        const originalText = copyBtn.textContent;
-        
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-            copyBtn.textContent = originalText;
-        }, 2000);
-    }).catch(err => {
-        console.error('Failed to copy:', err);
-        alert('Failed to copy');
-    });
-}
-
-// Get color name based on hex value
-function getColorName(hexValue) {
-    const colorNames = {
-        '000000': 'Black',
-        'FFFFFF': 'White',
-        'FF0000': 'Red',
-        '00FF00': 'Lime',
-        '0000FF': 'Blue',
-        'FFFF00': 'Yellow',
-        'FF00FF': 'Magenta',
-        '00FFFF': 'Cyan',
-        'FF6600': 'Orange',
-        'FF00AA': 'Pink',
-        '800080': 'Purple',
-        '008000': 'Green',
-        'FFC0CB': 'Light Pink',
-        'A9A9A9': 'Gray',
-        '808080': 'Dark Gray',
-        'C0C0C0': 'Silver'
-    };
-    
-    const normalized = hexValue.toUpperCase().replace('#', '');
-    return colorNames[normalized] || 'Custom Color';
-}
-
-// Calculate brightness percentage (0-100)
-function calculateBrightness(r, g, b) {
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return Math.round((brightness / 255) * 100);
-}
-
-// Update color name display
 function updateColorName(r, g, b) {
-    const colorNameDisplay = document.getElementById('colorNameDisplay');
-    const colorName = getColorName(`${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`);
-    if (colorNameDisplay) {
-        colorNameDisplay.textContent = colorName;
-    }
+    const names = {
+        '000000': 'Black', 'FFFFFF': 'White', 'FF0000': 'Red', '00FF00': 'Green',
+        '0000FF': 'Blue', 'FFFF00': 'Yellow', 'FF00FF': 'Magenta', '00FFFF': 'Cyan',
+        'FFA500': 'Orange', 'FF69B4': 'Pink', '800080': 'Purple', 'A52A2A': 'Brown'
+    };
+    
+    const hex = [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    const name = names[hex] || 'Custom';
+    
+    const el = document.getElementById('colorNameDisplay');
+    el && (el.textContent = name);
 }
 
-// Update brightness display
 function updateBrightness(r, g, b) {
-    const brightness = calculateBrightness(r, g, b);
-    const brightnessPercent = document.getElementById('brightnessPercent');
-    const brightnessBar = document.getElementById('brightnessBar');
+    const bright = Math.round(((r * 299 + g * 587 + b * 114) / 1000 / 255) * 100);
     
-    if (brightnessPercent) brightnessPercent.textContent = brightness + '%';
+    const el = document.getElementById('brightnessPercent');
+    el && (el.textContent = bright + '%');
     
-    if (brightnessBar) {
-        brightnessBar.style.setProperty('--brightness-position', (brightness / 100) * 100 + '%');
-        const pseudo = brightnessBar.querySelector('::after');
-        if (pseudo) pseudo.style.left = (brightness / 100) * 100 + '%';
-        
-        // Update bar position manually
-        brightnessBar.style.background = `linear-gradient(to right, #000000 0%, #ffffff 100%)`;
-        brightnessBar.setAttribute('data-brightness', brightness);
+    const bar = document.getElementById('brightnessBar');
+    if (bar) {
+        const pos = (bright / 100) * 100;
+        bar.style.background = `linear-gradient(to right, #000 0%, #fff 100%), 
+                                linear-gradient(to right, #3498db ${pos}%, transparent ${pos}%)`;
     }
 }
 
-// Update color swatch preview
-function updateColorSwatch(hexValue) {
-    const colorSwatch = document.getElementById('colorSwatch');
-    if (colorSwatch) {
-        colorSwatch.style.backgroundColor = hexValue;
-    }
+function updateSwatch(hex) {
+    const el = document.getElementById('colorSwatch');
+    el && (el.style.backgroundColor = hex);
 }
 
-// Add color to history
-function addToColorHistory(hexValue) {
-    let history = JSON.parse(localStorage.getItem('colorHistory')) || [];
-    
-    // Remove if already exists (avoid duplicates)
-    history = history.filter(color => color !== hexValue);
-    
-    // Add to beginning
-    history.unshift(hexValue);
-    
-    // Keep only last 5
-    if (history.length > 5) {
-        history = history.slice(0, 5);
-    }
-    
-    // Save to localStorage
-    localStorage.setItem('colorHistory', JSON.stringify(history));
-    
-    // Display history
-    displayColorHistory();
+function saveColor(hex) {
+    let hist = JSON.parse(localStorage.getItem('colorHistory')) || [];
+    hist = hist.filter(c => c !== hex);
+    hist.unshift(hex);
+    if (hist.length > 5) hist.pop();
+    localStorage.setItem('colorHistory', JSON.stringify(hist));
+    loadHistory();
 }
 
-// Display color history
-function displayColorHistory() {
-    const historyContainer = document.getElementById('colorHistory');
-    const clearBtn = document.getElementById('clearHistoryBtn');
+function loadHistory() {
+    const cont = document.getElementById('colorHistory');
+    if (!cont) return;
     
-    if (!historyContainer) return;
+    const hist = JSON.parse(localStorage.getItem('colorHistory')) || [];
+    cont.innerHTML = '';
     
-    let history = JSON.parse(localStorage.getItem('colorHistory')) || [];
-    
-    historyContainer.innerHTML = '';
-    
-    // Fill remaining slots with empty items
     for (let i = 0; i < 5; i++) {
         const item = document.createElement('div');
-        item.className = history[i] ? 'history-item' : 'history-item empty';
+        item.className = hist[i] ? 'history-item' : 'history-item empty';
         
-        if (history[i]) {
-            const hexColor = history[i];
-            item.style.backgroundColor = hexColor;
-            item.textContent = hexColor;
-            
-            // Click to use this color
+        if (hist[i]) {
+            item.style.backgroundColor = hist[i];
+            item.textContent = hist[i];
             item.addEventListener('click', () => {
-                const colorInput = document.getElementById('colorInput');
-                if (colorInput) {
-                    colorInput.value = hexColor.replace('#', '');
-                    handleInputChange();
-                }
+                const inp = document.getElementById('colorInput');
+                inp.value = hist[i].replace('#', '');
+                onInputChange({ target: inp });
             });
         } else {
             item.textContent = '-';
         }
         
-        historyContainer.appendChild(item);
+        cont.appendChild(item);
     }
     
-    // Show/hide clear button
-    if (clearBtn && history.length > 0) {
-        clearBtn.style.display = 'block';
-    }
+    const clearBtn = document.getElementById('clearHistoryBtn');
+    clearBtn && (clearBtn.style.display = hist.length > 0 ? 'block' : 'none');
 }
 
-// Clear color history
-function clearColorHistory() {
-    if (confirm('Clear all color history?')) {
+function clearHistory() {
+    if (confirm('Clear history?')) {
         localStorage.removeItem('colorHistory');
-        displayColorHistory();
-        document.getElementById('clearHistoryBtn').style.display = 'none';
+        loadHistory();
     }
 }
 
-// Make hex display clickable to copy
-function setupHexClickToCopy() {
-    const hexDisplay = document.getElementById('hexDisplay');
-    if (hexDisplay) {
-        hexDisplay.addEventListener('click', copyColorCode);
-        hexDisplay.title = 'Click to copy';
+function setupHexClick() {
+    const hex = document.getElementById('hexDisplay');
+    hex && (hex.addEventListener('click', copyCode), hex.style.cursor = 'pointer');
+}
+
+function copyCode() {
+    const hex = document.getElementById('hexDisplay')?.textContent;
+    if (!hex) return;
+    
+    navigator.clipboard.writeText(hex).then(() => {
+        const btn = document.getElementById('copyBtn');
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = orig), 1500);
+    }).catch(() => alert('Copy failed'));
+}
+
+function resetColor() {
+    const inp = document.getElementById('colorInput');
+    inp.value = '';
+    inp.classList.remove('valid', 'invalid');
+    showError('');
+    updateColor('000000');
+}
+
+function randomColor() {
+    const rand = Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    const inp = document.getElementById('colorInput');
+    inp.value = rand;
+    updateColor(rand);
+}
+
+function moveInputOnScroll() {
+    const section = document.querySelector('.input-section');
+    if (!section) return;
+    
+    const rect = section.getBoundingClientRect();
+    if (rect.top < 50) {
+        section.classList.add('scrolled');
+    } else {
+        section.classList.remove('scrolled');
     }
+}
+
+function showDefaultColor() {
+    updateColor('000000');
 }

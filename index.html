@@ -1,99 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Meta tags for browser and responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Change background color by entering a 6-digit number">
-    <meta name="theme-color" content="#3498db">
-    
-    <title>Background Color Generator</title>
+    <title>Color Number</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <!-- Main container with grid layout (header, content, footer) -->
     <div class="page-container">
-
-        <!-- Header section -->
         <header class="page-header">
-            <h1>Background Color Generator</h1>
-            <p class="subtitle">Enter a 6-digit number to change the background color</p>
+            <h1>Color Number</h1>
+            <p class="subtitle">Enter a 6-digit number to change the background</p>
         </header>
 
-        <!-- Main content area -->
         <main class="content-wrapper">
-
-            <!-- Input section - user enters color number -->
-            <section class="input-section" aria-labelledby="inputTitle">
-                <h2 id="inputTitle" class="section-title">Color Input</h2>
-                
-                <label for="colorInput" class="input-label">
-                    Enter a 6-Digit Number
-                </label>
-
-                <input
-                    type="text"
-                    id="colorInput"
-                    class="color-input"
-                    placeholder="e.g., 123456"
+            <!-- Input -->
+            <section class="input-section">
+                <h2 class="section-title">Color Input</h2>
+                <label for="colorInput" class="input-label">Enter a 6-Digit Number:</label>
+                <input 
+                    type="text" 
+                    id="colorInput" 
+                    class="color-input" 
+                    placeholder="e.g., FF0000"
                     maxlength="6"
-                    aria-label="Enter 6-digit number for background color"
-                    aria-describedby="errorMessage inputHint"
                     inputmode="numeric"
                 >
-
-                <p id="inputHint" class="input-hint">
-                    Enter numbers only (0-9). Example: FF0000 for red
-                </p>
-
-                <!-- Error message appears here -->
-                <div
-                    id="errorMessage"
-                    class="error-message hidden"
-                    role="alert"
-                    aria-live="polite"
-                    aria-atomic="true"
-                ></div>
+                <p class="input-hint">Numbers only (0-9). Example: FF0000 for red</p>
+                <div id="errorMessage" class="error-message hidden"></div>
             </section>
 
-            <!-- Display section - shows current color -->
-            <section class="display-section" aria-labelledby="displayTitle">
-                <h2 id="displayTitle" class="section-title">Current Color</h2>
+            <!-- Display -->
+            <section class="display-section">
+                <h2 class="section-title">Current Color</h2>
                 
-                <!-- Color number display -->
                 <div class="display-area">
-                    <p class="display-label">Color Number:</p>
-                    <div id="colorDisplay" class="color-display" aria-live="polite">
-                        000000
-                    </div>
+                    <p class="display-label">Number:</p>
+                    <div id="colorDisplay" class="color-display">000000</div>
                 </div>
 
-                <!-- Hex code display -->
                 <div class="hex-area">
-                    <p class="display-label">Hex Code:</p>
-                    <div id="hexDisplay" class="hex-display" aria-live="polite">
-                        #000000
-                    </div>
+                    <p class="display-label">Hex:</p>
+                    <div id="hexDisplay" class="hex-display">#000000</div>
                 </div>
 
-                <!-- RGB display -->
                 <div class="rgb-area">
                     <p class="display-label">RGB:</p>
-                    <div id="rgbDisplay" class="rgb-display" aria-live="polite">
-                        rgb(0, 0, 0)
-                    </div>
+                    <div id="rgbDisplay" class="rgb-display">rgb(0, 0, 0)</div>
                 </div>
 
-                <!-- Color Name display -->
                 <div class="color-name-area">
-                    <p class="display-label">Color Name:</p>
-                    <div id="colorNameDisplay" class="color-name-display" aria-live="polite">
-                        Black
-                    </div>
+                    <p class="display-label">Name:</p>
+                    <div id="colorNameDisplay" class="color-name-display">Black</div>
                 </div>
 
-                <!-- Brightness display -->
                 <div class="brightness-area">
                     <p class="display-label">Brightness:</p>
                     <div class="brightness-container">
@@ -102,52 +63,38 @@
                     </div>
                 </div>
 
-                <!-- Color preview swatch -->
                 <div class="preview-area">
                     <p class="display-label">Preview:</p>
                     <div id="colorSwatch" class="color-swatch"></div>
                 </div>
             </section>
 
-            <!-- Buttons section -->
+            <!-- Buttons -->
             <section class="button-section">
                 <div class="button-group">
-                    <button id="resetBtn" class="reset-btn btn">
-                        Reset Color
-                    </button>
-
-                    <button id="randomBtn" class="random-btn btn">
-                        Random Color
-                    </button>
-
-                    <button id="copyBtn" class="copy-btn btn">
-                        Copy Code
-                    </button>
+                    <button id="resetBtn" class="reset-btn btn">Reset</button>
+                    <button id="randomBtn" class="random-btn btn">Random</button>
+                    <button id="copyBtn" class="copy-btn btn">Copy Code</button>
                 </div>
             </section>
 
-            <!-- Color History section -->
-            <section class="history-section" id="historySection" aria-labelledby="historyTitle">
-                <h2 id="historyTitle" class="section-title">Color History</h2>
+            <!-- History -->
+            <section class="history-section">
+                <h2 class="section-title">Color History</h2>
                 <div id="colorHistory" class="color-history"></div>
-                <button id="clearHistoryBtn" class="clear-history-btn btn" style="display: none; margin-top: 1rem;">
+                <button id="clearHistoryBtn" class="clear-history-btn btn" style="display: none;">
                     Clear History
                 </button>
             </section>
-
         </main>
 
-        <!-- Footer -->
         <footer class="page-footer">
             <p class="footer-text">
-                Background Color Generator • 
-                <span id="currentColor">Color: #000000</span>
+                Color Generator • <span id="currentColor">Color: #000000</span>
             </p>
         </footer>
-
     </div>
 
-    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
