@@ -299,26 +299,3 @@ function copyColorCode() {
         alert('Failed to copy');
     });
 }
-
-/* ==================== BONUS FEATURES ==================== */
-/*
-   Ready to add bonus features? Uncomment and add:
-   
-   1. COLOR PREVIEW SWATCH
-      - Show live color preview as user types
-      - Functions: updateColorPreview(), resetColorPreview()
-   
-   2. COPY HEX TO CLIPBOARD
-      - Make hex display clickable to copy
-      - Functions: copyHexToClipboard(), handleHexDisplayClick()
-   
-   3. COLOR HISTORY (localStorage)
-      - Save last 5 colors used
-      - Functions: addToColorHistory(), displayColorHistory()
-   
-   4. ADVANCED COLOR INFO
-      - Show color names, brightness %, RGB
-      - Functions: getColorName(), calculateBrightness(), updateAdvancedColorInfo()
-   
-   Check BONUS_FEATURES.md for complete implementations!
-*/
