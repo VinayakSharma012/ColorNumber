@@ -1,5 +1,44 @@
 /* =============================================
-   CSS RESET & BASE STYLES
+   CSS VARIABLES (CUSTOMIZABLE)
+   Define colors, spacing, and sizing
+   ============================================= */
+
+:root {
+    /* Colors */
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #27ae60;
+    --error-color: #e74c3c;
+    --warning-color: #f39c12;
+    --bg-color: #ecf0f1;
+    --text-color: #2c3e50;
+    --light-text: #ffffff;
+    --input-border: #bdc3c7;
+    --input-focus: #3498db;
+    --card-bg: #ffffff;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* Sizing */
+    --max-content-width: 500px;
+    --border-radius: 8px;
+    --transition: 0.3s ease;
+    --transition-fast: 0.15s ease;
+
+    /* Typography */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-mono: 'Courier New', monospace;
+}
+
+/* =============================================
+   CSS RESET & NORMALIZE
    ============================================= */
 
 * {
@@ -9,18 +48,578 @@
 }
 
 html {
+    height: 100%;
     font-size: 16px;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-family);
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--bg-color);
-    transition: background-color 0.3s ease;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.5s ease-in-out;
+}
+
+/* =============================================
+   PAGE CONTAINER - CSS GRID
+   Main layout container using Grid
+   ============================================= */
+
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    background-color: var(--bg-color);
+    transition: background-color 0.5s ease-in-out;
+}
+
+/* =============================================
+   HEADER SECTION
+   ============================================= */
+
+.page-header {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--light-text);
+    box-shadow: 0 4px 6px var(--shadow-light);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.page-header .subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    margin: 0;
+}
+
+/* =============================================
+   MAIN CONTENT WRAPPER - CSS GRID
+   Center content using Grid with place-items
+   ============================================= */
+
+.content-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    width: 100%;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-md);
+    justify-self: center;
+}
+
+/* =============================================
+   INPUT SECTION - CSS GRID
+   ============================================= */
+
+.input-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    background-color: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px var(--shadow-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.input-section .section-title {
+    grid-column: 1;
+    font-size: 1.3rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+.input-label {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Input field styling */
+.color-input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    font-size: 1.2rem;
+    border: 2px solid var(--input-border);
+    border-radius: var(--border-radius);
+    color: var(--text-color);
+    background-color: white;
+    font-family: var(--font-mono);
+    letter-spacing: 2px;
+    text-align: center;
+    transition: all var(--transition);
+    cursor: text;
+}
+
+/* Input focus state */
+.color-input:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Input hover state */
+.color-input:hover {
+    border-color: #95a5a6;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+/* Input placeholder */
+.color-input::placeholder {
+    color: #bdc3c7;
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+/* Input hint text */
+.input-hint {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: var(--spacing-xs);
+    font-style: italic;
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 3px solid var(--error-color);
+    border-radius: 3px;
+    min-height: 1.2rem;
+    transition: opacity var(--transition);
+    display: block;
+}
+
+/* Hidden error message */
+.error-message.hidden {
+    display: none;
+}
+
+/* =============================================
+   DISPLAY SECTION - CSS GRID
+   ============================================= */
+
+.display-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    background-color: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px var(--shadow-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.display-section .section-title {
+    grid-column: 1;
+    font-size: 1.3rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+/* Display areas */
+.display-area,
+.hex-area,
+.rgb-area {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background-color: rgba(52, 152, 219, 0.05);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    text-align: center;
+}
+
+.display-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Color display text */
+.color-display,
+.hex-display,
+.rgb-display {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--primary-color);
+    transition: all var(--transition);
+    word-break: break-all;
+}
+
+.color-display {
+    font-size: 3rem;
+    min-height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hex-display {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+.rgb-display {
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+/* =============================================
+   BUTTON SECTION - CSS GRID
+   ============================================= */
+
+.button-section {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin-top: var(--spacing-md);
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+/* Button base styles */
+.btn {
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 4px var(--shadow-light);
+    width: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+/* Reset button */
+.reset-btn {
+    background-color: var(--error-color);
+    color: var(--light-text);
+}
+
+.reset-btn:hover {
+    background-color: #c0392b;
+    filter: brightness(0.9);
+}
+
+/* Random button */
+.random-btn {
+    background-color: var(--success-color);
+    color: var(--light-text);
+}
+
+.random-btn:hover {
+    background-color: #229954;
+    filter: brightness(0.9);
+}
+
+/* Copy button */
+.copy-btn {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.copy-btn:hover {
+    background-color: #2980b9;
+    filter: brightness(0.9);
+}
+
+/* =============================================
+   FOOTER SECTION
+   ============================================= */
+
+.page-footer {
+    grid-column: 1;
+    grid-row: 3;
+    text-align: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--input-border);
+    font-size: 0.9rem;
+    color: var(--text-color);
+    box-shadow: 0 -2px 4px var(--shadow-light);
+}
+
+.footer-text {
+    margin-bottom: var(--spacing-xs);
+    margin: 0;
+    padding: 0;
+}
+
+.footer-credits {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin: 0;
+    padding: 0;
+}
+
+.footer-credits a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.footer-credits a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* =============================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ============================================= */
+
+/* Mobile: 320px - 480px */
+@media (max-width: 480px) {
+    :root {
+        font-size: 14px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .page-header .subtitle {
+        font-size: 0.95rem;
+    }
+
+    .content-wrapper {
+        padding: var(--spacing-md) var(--spacing-sm);
+        max-width: 100%;
+    }
+
+    .input-section,
+    .display-section {
+        padding: var(--spacing-md);
+    }
+
+    .color-input {
+        font-size: 1rem;
+        padding: var(--spacing-sm);
+    }
+
+    .color-display {
+        font-size: 2.5rem;
+        min-height: 4rem;
+    }
+
+    .hex-display {
+        font-size: 1rem;
+    }
+
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        padding: var(--spacing-sm);
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet: 481px - 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+    :root {
+        font-size: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .page-header .subtitle {
+        font-size: 1rem;
+    }
+
+    .content-wrapper {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .color-display {
+        font-size: 3rem;
+    }
+
+    .button-group {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .random-btn {
+        grid-column: 1 / 2;
+    }
+
+    .copy-btn {
+        grid-column: 2 / 3;
+    }
+
+    .reset-btn {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Desktop: 769px and above */
+@media (min-width: 769px) {
+    :root {
+        font-size: 16px;
+    }
+
+    .page-header h1 {
+        font-size: 2.8rem;
+    }
+
+    .page-header .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .page-header {
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .content-wrapper {
+        padding: var(--spacing-xl) var(--spacing-lg);
+        max-width: 600px;
+    }
+
+    .input-section,
+    .display-section {
+        padding: var(--spacing-lg);
+    }
+
+    .color-input {
+        font-size: 1.2rem;
+        padding: 1rem 1.2rem;
+    }
+
+    .color-display {
+        font-size: 4rem;
+        min-height: 6rem;
+    }
+
+    .hex-display {
+        font-size: 1.3rem;
+    }
+
+    .button-group {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .reset-btn {
+        grid-column: auto;
+    }
+
+    .btn {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Large Desktop: 1024px and above */
+@media (min-width: 1024px) {
+    .page-header h1 {
+        font-size: 3rem;
+    }
+
+    .page-header {
+        padding: var(--spacing-xl) var(--spacing-xl);
+    }
+
+    .content-wrapper {
+        max-width: 650px;
+        padding: var(--spacing-xl) var(--spacing-xl);
+    }
+}
+
+/* =============================================
+   ACCESSIBILITY
+   ============================================= */
+
+/* Focus visible for keyboard navigation */
+.btn:focus-visible,
+.color-input:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* =============================================
