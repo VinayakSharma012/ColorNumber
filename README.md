@@ -8,11 +8,11 @@ A simple project that changes the background color based on the 6-digit number y
 
 ## 🎨 UI Preview
 
-![ColorNumber App - View 1](./images/Screenshot\ 2026-04-17\ at\ 10.28.38\ PM.png)
+![ColorNumber App - View 1](./images/Screenshot%202026-04-17%20at%2010.28.38%20PM.png)
 
-![ColorNumber App - View 2](./images/Screenshot\ 2026-04-17\ at\ 10.28.45\ PM.png)
+![ColorNumber App - View 2](./images/Screenshot%202026-04-17%20at%2010.28.45%20PM.png)
 
-![ColorNumber App - View 3](./images/Screenshot\ 2026-04-17\ at\ 10.28.52\ PM.png)
+![ColorNumber App - View 3](./images/Screenshot%202026-04-17%20at%2010.28.52%20PM.png)
 
 ---
 
