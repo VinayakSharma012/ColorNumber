@@ -6,6 +6,19 @@ A simple project that changes the background color based on the 6-digit number y
 
 ---
 
+## 🎨 UI Preview
+
+**Desktop View:**
+![ColorNumber App - Desktop](./images/Screenshot%202026-04-17%20at%2010.28.38%20PM.png)
+
+**Tablet View:**
+![ColorNumber App - Tablet](./images/Screenshot%202026-04-17%20at%2010.28.45%20PM.png)
+
+**Mobile View:**
+![ColorNumber App - Mobile](./images/Screenshot%202026-04-17%20at%2010.28.52%20PM.png)
+
+---
+
 ## ✨ Features
 
 - Enter any 6-digit number to change the background color
