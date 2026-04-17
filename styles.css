@@ -549,6 +549,12 @@ body {
     animation: shake 0.3s ease;
 }
 
+/* Input valid state */
+.color-input.valid {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15);
+}
+
 /* =============================================
    DISPLAY AREA ANIMATIONS
    ============================================= */
