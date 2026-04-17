@@ -1,46 +1,26 @@
-/* =============================================
-   CSS VARIABLES (CUSTOMIZABLE)
-   Define colors, spacing, and sizing
-   ============================================= */
-
+/* ==================== VARIABLES ==================== */
 :root {
     /* Colors */
     --primary-color: #3498db;
     --secondary-color: #2c3e50;
     --success-color: #27ae60;
     --error-color: #e74c3c;
-    --warning-color: #f39c12;
     --bg-color: #ecf0f1;
     --text-color: #2c3e50;
     --light-text: #ffffff;
-    --input-border: #bdc3c7;
-    --input-focus: #3498db;
-    --card-bg: #ffffff;
-    --shadow-light: rgba(0, 0, 0, 0.1);
-    --shadow-medium: rgba(0, 0, 0, 0.2);
 
-    /* Spacing */
+    /* Spacing & Sizing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
-
-    /* Sizing */
-    --max-content-width: 500px;
+    --max-width: 500px;
     --border-radius: 8px;
     --transition: 0.3s ease;
-    --transition-fast: 0.15s ease;
-
-    /* Typography */
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --font-mono: 'Courier New', monospace;
 }
 
-/* =============================================
-   CSS RESET & NORMALIZE
-   ============================================= */
-
+/* ==================== BASE STYLES ==================== */
 * {
     margin: 0;
     padding: 0;
@@ -54,23 +34,15 @@ html {
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--bg-color);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
     transition: background-color 0.5s ease-in-out;
 }
 
-/* =============================================
-   PAGE CONTAINER - CSS GRID
-   Main layout container using Grid
-   ============================================= */
-
+/* ==================== PAGE LAYOUT (CSS GRID) ==================== */
 .page-container {
     width: 100%;
     min-height: 100vh;
@@ -81,10 +53,6 @@ body {
     transition: background-color 0.5s ease-in-out;
     will-change: background-color;
 }
-
-/* =============================================
-   HEADER SECTION
-   ============================================= */
 
 .page-header {
     grid-column: 1;
@@ -1282,3 +1250,14 @@ section {
 .p-1 { padding: var(--spacing-sm); }
 .p-2 { padding: var(--spacing-md); }
 .p-3 { padding: var(--spacing-lg); }
+
+/* ==================== BONUS FEATURES ==================== */
+/* 
+   Below are CSS placeholders for bonus features:
+   - Color preview swatch (shows live preview)
+   - Copy hex to clipboard (clickable hex display)
+   - Color history (shows last 5 colors)
+   - Advanced color info (brightness bar, color names)
+   
+   Add these styles when implementing bonus features
+*/
