@@ -9,6 +9,7 @@ function initializeApp() {
     const resetBtn = document.getElementById('resetBtn');
     const randomBtn = document.getElementById('randomBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     
     // Input field listeners - validate as user types
     if (colorInput) {
@@ -21,9 +22,14 @@ function initializeApp() {
     if (resetBtn) resetBtn.addEventListener('click', resetPage);
     if (randomBtn) randomBtn.addEventListener('click', generateRandomColor);
     if (copyBtn) copyBtn.addEventListener('click', copyColorCode);
+    if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', clearColorHistory);
     
     // Scroll listener for input animation
     window.addEventListener('scroll', handleScroll);
+    
+    // Bonus features setup
+    displayColorHistory();
+    setupHexClickToCopy();
     
     // Show default color on load
     initializeDisplay();
@@ -205,6 +211,12 @@ function updateDisplayText(colorNumber, hexColor) {
     // Update footer
     const currentColorSpan = document.getElementById('currentColor');
     if (currentColorSpan) currentColorSpan.textContent = `Color: ${hexColor}`;
+    
+    // Bonus features - update all displays
+    updateColorName(r, g, b);
+    updateBrightness(r, g, b);
+    updateColorSwatch(hexColor);
+    addToColorHistory(hexColor);
 }
 
 // Show default color on page load
@@ -298,4 +310,153 @@ function copyColorCode() {
         console.error('Failed to copy:', err);
         alert('Failed to copy');
     });
+}
+
+// Get color name based on hex value
+function getColorName(hexValue) {
+    const colorNames = {
+        '000000': 'Black',
+        'FFFFFF': 'White',
+        'FF0000': 'Red',
+        '00FF00': 'Lime',
+        '0000FF': 'Blue',
+        'FFFF00': 'Yellow',
+        'FF00FF': 'Magenta',
+        '00FFFF': 'Cyan',
+        'FF6600': 'Orange',
+        'FF00AA': 'Pink',
+        '800080': 'Purple',
+        '008000': 'Green',
+        'FFC0CB': 'Light Pink',
+        'A9A9A9': 'Gray',
+        '808080': 'Dark Gray',
+        'C0C0C0': 'Silver'
+    };
+    
+    const normalized = hexValue.toUpperCase().replace('#', '');
+    return colorNames[normalized] || 'Custom Color';
+}
+
+// Calculate brightness percentage (0-100)
+function calculateBrightness(r, g, b) {
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return Math.round((brightness / 255) * 100);
+}
+
+// Update color name display
+function updateColorName(r, g, b) {
+    const colorNameDisplay = document.getElementById('colorNameDisplay');
+    const colorName = getColorName(`${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`);
+    if (colorNameDisplay) {
+        colorNameDisplay.textContent = colorName;
+    }
+}
+
+// Update brightness display
+function updateBrightness(r, g, b) {
+    const brightness = calculateBrightness(r, g, b);
+    const brightnessPercent = document.getElementById('brightnessPercent');
+    const brightnessBar = document.getElementById('brightnessBar');
+    
+    if (brightnessPercent) brightnessPercent.textContent = brightness + '%';
+    
+    if (brightnessBar) {
+        brightnessBar.style.setProperty('--brightness-position', (brightness / 100) * 100 + '%');
+        const pseudo = brightnessBar.querySelector('::after');
+        if (pseudo) pseudo.style.left = (brightness / 100) * 100 + '%';
+        
+        // Update bar position manually
+        brightnessBar.style.background = `linear-gradient(to right, #000000 0%, #ffffff 100%)`;
+        brightnessBar.setAttribute('data-brightness', brightness);
+    }
+}
+
+// Update color swatch preview
+function updateColorSwatch(hexValue) {
+    const colorSwatch = document.getElementById('colorSwatch');
+    if (colorSwatch) {
+        colorSwatch.style.backgroundColor = hexValue;
+    }
+}
+
+// Add color to history
+function addToColorHistory(hexValue) {
+    let history = JSON.parse(localStorage.getItem('colorHistory')) || [];
+    
+    // Remove if already exists (avoid duplicates)
+    history = history.filter(color => color !== hexValue);
+    
+    // Add to beginning
+    history.unshift(hexValue);
+    
+    // Keep only last 5
+    if (history.length > 5) {
+        history = history.slice(0, 5);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('colorHistory', JSON.stringify(history));
+    
+    // Display history
+    displayColorHistory();
+}
+
+// Display color history
+function displayColorHistory() {
+    const historyContainer = document.getElementById('colorHistory');
+    const clearBtn = document.getElementById('clearHistoryBtn');
+    
+    if (!historyContainer) return;
+    
+    let history = JSON.parse(localStorage.getItem('colorHistory')) || [];
+    
+    historyContainer.innerHTML = '';
+    
+    // Fill remaining slots with empty items
+    for (let i = 0; i < 5; i++) {
+        const item = document.createElement('div');
+        item.className = history[i] ? 'history-item' : 'history-item empty';
+        
+        if (history[i]) {
+            const hexColor = history[i];
+            item.style.backgroundColor = hexColor;
+            item.textContent = hexColor;
+            
+            // Click to use this color
+            item.addEventListener('click', () => {
+                const colorInput = document.getElementById('colorInput');
+                if (colorInput) {
+                    colorInput.value = hexColor.replace('#', '');
+                    handleInputChange();
+                }
+            });
+        } else {
+            item.textContent = '-';
+        }
+        
+        historyContainer.appendChild(item);
+    }
+    
+    // Show/hide clear button
+    if (clearBtn && history.length > 0) {
+        clearBtn.style.display = 'block';
+    }
+}
+
+// Clear color history
+function clearColorHistory() {
+    if (confirm('Clear all color history?')) {
+        localStorage.removeItem('colorHistory');
+        displayColorHistory();
+        document.getElementById('clearHistoryBtn').style.display = 'none';
+    }
+}
+
+// Make hex display clickable to copy
+function setupHexClickToCopy() {
+    const hexDisplay = document.getElementById('hexDisplay');
+    if (hexDisplay) {
+        hexDisplay.addEventListener('click', copyColorCode);
+        hexDisplay.title = 'Click to copy';
+    }
 }

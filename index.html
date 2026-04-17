@@ -84,6 +84,29 @@
                         rgb(0, 0, 0)
                     </div>
                 </div>
+
+                <!-- Color Name display -->
+                <div class="color-name-area">
+                    <p class="display-label">Color Name:</p>
+                    <div id="colorNameDisplay" class="color-name-display" aria-live="polite">
+                        Black
+                    </div>
+                </div>
+
+                <!-- Brightness display -->
+                <div class="brightness-area">
+                    <p class="display-label">Brightness:</p>
+                    <div class="brightness-container">
+                        <div id="brightnessBar" class="brightness-bar"></div>
+                        <div id="brightnessPercent" class="brightness-percent">0%</div>
+                    </div>
+                </div>
+
+                <!-- Color preview swatch -->
+                <div class="preview-area">
+                    <p class="display-label">Preview:</p>
+                    <div id="colorSwatch" class="color-swatch"></div>
+                </div>
             </section>
 
             <!-- Buttons section -->
@@ -101,6 +124,15 @@
                         Copy Code
                     </button>
                 </div>
+            </section>
+
+            <!-- Color History section -->
+            <section class="history-section" id="historySection" aria-labelledby="historyTitle">
+                <h2 id="historyTitle" class="section-title">Color History</h2>
+                <div id="colorHistory" class="color-history"></div>
+                <button id="clearHistoryBtn" class="clear-history-btn btn" style="display: none; margin-top: 1rem;">
+                    Clear History
+                </button>
             </section>
 
         </main>

@@ -461,6 +461,168 @@ section {
     outline-offset: 2px;
 }
 
+/* ==================== BONUS FEATURES STYLING ==================== */
+
+/* Color Name Display */
+.color-name-area,
+.brightness-area,
+.preview-area {
+    display: grid;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background-color: rgba(52, 152, 219, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    margin-bottom: var(--spacing-md);
+}
+
+.color-name-area:last-child,
+.brightness-area:last-child,
+.preview-area:last-child {
+    margin-bottom: 0;
+}
+
+.color-name-display {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+/* Brightness Bar */
+.brightness-container {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.brightness-bar {
+    flex: 1;
+    height: 20px;
+    background: linear-gradient(to right, #000000, #ffffff);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.brightness-bar::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 3px;
+    background-color: var(--primary-color);
+    top: 0;
+    border-radius: var(--radius-sm);
+    transition: left 0.4s ease-in;
+}
+
+.brightness-percent {
+    min-width: 50px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95rem;
+}
+
+/* Color Swatch Preview */
+.preview-area {
+    justify-items: center;
+}
+
+.color-swatch {
+    width: 100%;
+    height: 100px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-color);
+    background-color: #000000;
+    transition: background-color 0.4s ease-in;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Color History */
+.history-section {
+    animation: slideUpFadeIn 0.6s ease-out 0.6s both;
+}
+
+.color-history {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.history-item {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.history-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.history-item.empty {
+    background-color: #ecf0f1;
+    color: #7f8c8d;
+    cursor: not-allowed;
+    font-size: 0.9rem;
+}
+
+.clear-history-btn {
+    background-color: #95a5a6;
+    color: var(--light-text);
+    width: 100%;
+}
+
+.clear-history-btn:hover {
+    background-color: #7f8c8d;
+}
+
+@media (max-width: 480px) {
+    .color-history {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .color-swatch {
+        height: 80px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .color-history {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* Make hex display clickable */
+.hex-display {
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.hex-display:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+    transform: scale(1.05);
+}
+
+.hex-display.copied {
+    animation: fadeInScale 0.3s ease;
+    background-color: rgba(39, 174, 96, 0.15);
+}
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
