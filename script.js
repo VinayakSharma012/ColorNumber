@@ -1,8 +1,9 @@
-// init when page loads
+// wait for page to load
 document.addEventListener('DOMContentLoaded', () => {
     setupApp();
 });
 
+// setup everything when page loads
 function setupApp() {
     const input = document.getElementById('colorInput');
     const reset = document.getElementById('resetBtn');
@@ -10,27 +11,29 @@ function setupApp() {
     const copy = document.getElementById('copyBtn');
     const clearHist = document.getElementById('clearHistoryBtn');
     
-    // setup input listeners
+    // listen to user typing
     input?.addEventListener('input', onInputChange);
     input?.addEventListener('paste', onPaste);
     input?.addEventListener('keydown', onKeyPress);
     
-    // button clicks
+    // listen to button clicks
     reset?.addEventListener('click', resetColor);
     random?.addEventListener('click', randomColor);
     copy?.addEventListener('click', copyCode);
     clearHist?.addEventListener('click', clearHistory);
     
-    // when scrolling
+    // check scroll position
     window.addEventListener('scroll', moveInputOnScroll);
     
-    // load history and setup hex click
+    // show saved colors and make hex clickable
     loadHistory();
     setupHexClick();
     
+    // show black color on start
     showDefaultColor();
 }
 
+// check if input is correct (6 numbers)
 function validateInput(val) {
     if (val === "") return { valid: false, msg: "" };
     if (val.length < 6) return { valid: false, msg: `need ${6 - val.length} more` };
@@ -39,6 +42,7 @@ function validateInput(val) {
     return { valid: true, msg: "" };
 }
 
+// show or hide error message
 function showError(error) {
     const el = document.getElementById('errorMessage');
     if (!el) return;
@@ -50,6 +54,7 @@ function showError(error) {
     }
 }
 
+// when user types in input
 function onInputChange(e) {
     const val = e.target.value;
     const result = validateInput(val);
@@ -72,6 +77,7 @@ function onInputChange(e) {
     }
 }
 
+// when user pastes color code
 function onPaste(e) {
     e.preventDefault();
     const text = (e.clipboardData || window.clipboardData).getData('text');
@@ -80,6 +86,7 @@ function onPaste(e) {
     onInputChange({ target: e.target });
 }
 
+// when user presses enter
 function onKeyPress(e) {
     if (e.key === 'Enter') {
         const val = e.target.value;
@@ -89,6 +96,7 @@ function onKeyPress(e) {
     }
 }
 
+// convert hex to rgb values
 function hexToRgb(hex) {
     hex = hex.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
@@ -97,11 +105,12 @@ function hexToRgb(hex) {
     return { r, g, b };
 }
 
+// change everything when color is updated
 function updateColor(colorNum) {
     const hex = '#' + colorNum.toUpperCase();
     const { r, g, b } = hexToRgb(hex);
     
-    // update displays
+    // update all displays
     const colorDisp = document.getElementById('colorDisplay');
     const hexDisp = document.getElementById('hexDisplay');
     const rgbDisp = document.getElementById('rgbDisplay');
@@ -112,17 +121,18 @@ function updateColor(colorNum) {
     rgbDisp && (rgbDisp.textContent = `rgb(${r}, ${g}, ${b})`);
     footer && (footer.textContent = `Color: ${hex}`);
     
-    // change bg
+    // change page background
     document.body.style.backgroundColor = hex;
     document.querySelector('.page-container').style.backgroundColor = hex;
     
-    // bonus features
+    // update bonus features
     updateColorName(r, g, b);
     updateBrightness(r, g, b);
     updateSwatch(hex);
     saveColor(hex);
 }
 
+// show color name like red, blue etc
 function updateColorName(r, g, b) {
     const names = {
         '000000': 'Black', 'FFFFFF': 'White', 'FF0000': 'Red', '00FF00': 'Green',
@@ -137,6 +147,7 @@ function updateColorName(r, g, b) {
     el && (el.textContent = name);
 }
 
+// show how bright the color is
 function updateBrightness(r, g, b) {
     const bright = Math.round(((r * 299 + g * 587 + b * 114) / 1000 / 255) * 100);
     
@@ -151,11 +162,13 @@ function updateBrightness(r, g, b) {
     }
 }
 
+// show color preview box
 function updateSwatch(hex) {
     const el = document.getElementById('colorSwatch');
     el && (el.style.backgroundColor = hex);
 }
 
+// save color to history in browser memory
 function saveColor(hex) {
     let hist = JSON.parse(localStorage.getItem('colorHistory')) || [];
     hist = hist.filter(c => c !== hex);
@@ -165,6 +178,7 @@ function saveColor(hex) {
     loadHistory();
 }
 
+// load and show color history
 function loadHistory() {
     const cont = document.getElementById('colorHistory');
     if (!cont) return;
@@ -172,6 +186,7 @@ function loadHistory() {
     const hist = JSON.parse(localStorage.getItem('colorHistory')) || [];
     cont.innerHTML = '';
     
+    // make 5 boxes for colors
     for (let i = 0; i < 5; i++) {
         const item = document.createElement('div');
         item.className = hist[i] ? 'history-item' : 'history-item empty';
@@ -191,10 +206,12 @@ function loadHistory() {
         cont.appendChild(item);
     }
     
+    // show clear button only if there are saved colors
     const clearBtn = document.getElementById('clearHistoryBtn');
     clearBtn && (clearBtn.style.display = hist.length > 0 ? 'block' : 'none');
 }
 
+// delete all saved colors
 function clearHistory() {
     if (confirm('Clear history?')) {
         localStorage.removeItem('colorHistory');
@@ -202,11 +219,13 @@ function clearHistory() {
     }
 }
 
+// make hex code clickable to copy
 function setupHexClick() {
     const hex = document.getElementById('hexDisplay');
     hex && (hex.addEventListener('click', copyCode), hex.style.cursor = 'pointer');
 }
 
+// copy hex code to clipboard
 function copyCode() {
     const hex = document.getElementById('hexDisplay')?.textContent;
     if (!hex) return;
@@ -219,6 +238,7 @@ function copyCode() {
     }).catch(() => alert('Copy failed'));
 }
 
+// reset to black
 function resetColor() {
     const inp = document.getElementById('colorInput');
     inp.value = '';
@@ -227,6 +247,7 @@ function resetColor() {
     updateColor('000000');
 }
 
+// pick random color
 function randomColor() {
     const rand = Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
     const inp = document.getElementById('colorInput');
@@ -234,6 +255,7 @@ function randomColor() {
     updateColor(rand);
 }
 
+// move input box to corner when scrolling
 function moveInputOnScroll() {
     const section = document.querySelector('.input-section');
     if (!section) return;
@@ -246,6 +268,7 @@ function moveInputOnScroll() {
     }
 }
 
+// show black color at start
 function showDefaultColor() {
     updateColor('000000');
 }
